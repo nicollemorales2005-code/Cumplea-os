@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>¡Feliz Cumpleaños, mi niño precioso!</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Canvas Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- QR Code Generator -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        cream: '#FCFBF9',
+                        cardWhite: '#FFFFFF',
+                        warmSand: '#F0EAE1',
+                        accentGold: '#D4A373',
+                        softPink: '#E8A598',
+                        softCharcoal: '#2C2A29'
+                    },
+                    fontFamily: {
+                        sans: ['Montserrat', 'sans-serif'],
+                        serif: ['Cormorant Garamond', 'serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #FCFBF9;
+            color: #2C2A29;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .flame {
+            transform-origin: center bottom;
+            animation: flicker 1.2s infinite alternate ease-in-out;
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+
+        .flame.off {
+            opacity: 0;
+            transform: scale(0);
+        }
+
+        .smoke {
+            opacity: 0;
+            transition: opacity 0.8s ease;
+        }
+
+        .smoke.active {
+            animation: smokeRise 2s ease-out forwards;
+        }
+
+        @keyframes flicker {
+            0% { transform: scale(1) rotate(-2deg); }
+            100% { transform: scale(1.1) rotate(2deg); }
+        }
+
+        @keyframes smokeRise {
+            0% { opacity: 0.8; transform: translateY(0) scale(1); }
+            100% { opacity: 0; transform: translateY(-30px) scale(2); }
+        }
+
+        .gift-lid {
+            transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.27);
+        }
+
+        .gift-box.open .gift-lid {
+            transform: translateY(-45px) rotate(-15deg);
+        }
+
+        .card-reveal {
+            max-height: 0;
+            opacity: 0;
+            overflow: hidden;
+            transition: max-height 1s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.8s ease, margin-top 0.5s ease;
+        }
+
+        .card-reveal.open {
+            max-height: 900px;
+            opacity: 1;
+            margin-top: 1.5rem;
+        }
+
+        /* Creamos un estilo refinado para la ilustración del pastel mejorado */
+        .cake-glow {
+            filter: drop-shadow(0 10px 15px rgba(212, 163, 115, 0.25));
+        }
+    </style>
+</head>
+<body class="font-sans antialiased min-h-screen flex flex-col justify-between max-w-lg mx-auto px-4 py-8">
+
+    <script>
+        const CONFIG = {
+            nombre: "Mi niño precioso",
+            edad: "22 añitos",
+            tituloRegalo: "Una sorpresa para ti",
+            mensajeRegalo: "En este día tan especial quiero expresarte lo mucho que te amo, eres una gran persona con la que tuve la suerte de cruzarme y conocer, no sabes lo mucho que aprecio cada momento que pasamos juntos, aunque pueden haber dificultades seguimos apoyándonos. Gracias por aceptarme como soy y seguir queriéndome, siempre te lo digo pero no hay nadie como tú, eres lo mejor en mi vida.",
+            imagenRegalo: "https://i.ibb.co/HTbxxDwS/portada-223q.jpg", // Imagen exclusiva e independiente para la carta del regalo
+            musica: "https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=soft-piano-113970.mp3",
+            firma: "Tu amorcito",
+            fotos: [
+                { url: "https://i.ibb.co/1tBy13s2/20250130-125342.jpg", nota: "💖✨" },
+                { url: "https://i.ibb.co/b5QSJdCd/20240908-142352.jpg", nota: "💕" },
+                { url: "https://i.ibb.co/F4zdXq3c/20250122-105020.jpg", nota: "💓" }
+            ]
+        };
+    </script>
+
+    <header class="text-center space-y-2 mb-6">
+        <!-- BOTÓN DE QR EN EL ENCABEZADO -->
+        <div class="flex justify-end items-center mb-2 px-2">
+            <button onclick="abrirModalQR()" class="flex items-center gap-2 bg-accentGold text-white px-3 py-1.5 rounded-full text-xs font-medium shadow-sm hover:opacity-90 transition-all">
+                <i class="fa-solid fa-qrcode"></i>
+                <span>Compartir QR</span>
+            </button>
+        </div>
+
+        <span class="text-xs uppercase tracking-widest text-accentGold font-semibold">Una sorpresa especial</span>
+        <h1 id="header-title" class="text-4xl font-serif font-semibold text-softCharcoal">
+            ¡Feliz Cumpleaños!
+        </h1>
+        <div id="header-age" class="inline-block bg-warmSand text-softCharcoal text-xs font-medium px-4 py-1 rounded-full mt-2">
+            22 años
+        </div>
+    </header>
+
+    <main class="space-y-8">
+        <!-- SECCIÓN PASTEL MEJORADO -->
+        <section class="bg-cardWhite border border-warmSand rounded-3xl p-6 text-center shadow-sm relative">
+            <div class="w-48 h-48 mx-auto cursor-pointer select-none cake-glow" onclick="blowCandle()">
+                <svg class="w-full h-full" viewBox="0 0 120 120">
+                    <defs>
+                        <radialGradient id="flameGrad" cx="50%" cy="50%" r="50%">
+                            <stop offset="0%" stop-color="#FFF7AD"/>
+                            <stop offset="40%" stop-color="#FFAD33"/>
+                            <stop offset="100%" stop-color="#E76F51"/>
+                        </radialGradient>
+                        <linearGradient id="cakeLayer1" x1="0%" y1="0%" x2="0%" y2="100%">
+                            <stop offset="0%" stop-color="#FCEADE"/>
+                            <stop offset="100%" stop-color="#E8A598"/>
+                        </linearGradient>
+                        <linearGradient id="cakeLayer2" x1="0%" y1="0%" x2="0%" y2="100%">
+                            <stop offset="0%" stop-color="#F4A261"/>
+                            <stop offset="100%" stop-color="#E76F51"/>
+                        </linearGradient>
+                        <linearGradient id="creamDrip" x1="0%" y1="0%" x2="0%" y2="100%">
+                            <stop offset="0%" stop-color="#FFFFFF"/>
+                            <stop offset="100%" stop-color="#FFF3E0"/>
+                        </linearGradient>
+                    </defs>
+
+                    <!-- Base Plato -->
+                    <ellipse cx="60" cy="100" rx="48" ry="10" fill="#E0D7C6"/>
+                    <ellipse cx="60" cy="98" rx="45" ry="9" fill="#FFFFFF"/>
+
+                    <!-- Sombra Pastel -->
+                    <ellipse cx="60" cy="95" rx="38" ry="6" fill="rgba(0,0,0,0.08)"/>
+
+                    <!-- Piso Inferior Pastel -->
+                    <path d="M 24 72 L 24 92 C 24 99, 96 99, 96 92 L 96 72 Z" fill="url(#cakeLayer2)"/>
+                    <ellipse cx="60" cy="72" rx="36" ry="7" fill="#F4A261"/>
+
+                    <!-- Crema Derretida Piso Inferior -->
+                    <path d="M 24 72 C 30 78, 34 82, 38 75 C 44 83, 50 82, 56 75 C 62 82, 68 83, 74 76 C 80 82, 86 80, 96 72 C 96 75, 96 82, 96 73 Q 60 84 24 73 Z" fill="url(#creamDrip)"/>
+
+                    <!-- Piso Superior Pastel -->
+                    <path d="M 34 48 L 34 68 C 34 74, 86 74, 86 68 L 86 48 Z" fill="url(#cakeLayer1)"/>
+                    <ellipse cx="60" cy="48" rx="26" ry="5" fill="#FCEADE"/>
+
+                    <!-- Crema y Cobertura Piso Superior -->
+                    <path d="M 34 48 C 38 54, 43 56, 48 50 C 53 57, 60 56, 65 50 C 71 56, 78 55, 86 48 Q 60 55 34 48 Z" fill="url(#creamDrip)"/>
+                    <ellipse cx="60" cy="48" rx="26" ry="5" fill="#FFFFFF"/>
+
+                    <!-- Chispas / Decoraciones -->
+                    <circle cx="42" cy="53" r="1.5" fill="#E76F51"/>
+                    <circle cx="52" cy="52" r="1.5" fill="#D4A373"/>
+                    <circle cx="68" cy="53" r="1.5" fill="#E8A598"/>
+                    <circle cx="78" cy="51" r="1.5" fill="#E76F51"/>
+                    <circle cx="32" cy="78" r="1.8" fill="#FFFFFF"/>
+                    <circle cx="50" cy="81" r="1.8" fill="#D4A373"/>
+                    <circle cx="70" cy="80" r="1.8" fill="#FFFFFF"/>
+                    <circle cx="88" cy="78" r="1.8" fill="#D4A373"/>
+
+                    <!-- Vela Estilizada -->
+                    <rect x="58" y="26" width="4" height="22" fill="#D4A373" rx="1.5"/>
+                    <!-- Franjas de la vela -->
+                    <path d="M 58 30 L 62 32 M 58 36 L 62 38 M 58 42 L 62 44" stroke="#FFFFFF" stroke-width="1" stroke-linecap="round"/>
+                    <line x1="60" y1="26" x2="60" y2="21" stroke="#444" stroke-width="1"/>
+
+                    <!-- Humo de la Vela -->
+                    <path class="smoke" id="smoke" d="M 60 18 Q 55 12 60 6 T 65 0" stroke="#BBBBBB" stroke-width="2" fill="none" stroke-linecap="round"/>
+
+                    <!-- Llama Animada -->
+                    <path class="flame" id="flame" d="M 60 8 C 55 15, 55 21, 60 21 C 65 21, 65 15, 60 8 Z" fill="url(#flameGrad)"/>
+                </svg>
+            </div>
+            <p id="cake-instruction" class="text-xs text-gray-500 mt-2 font-light">Toca la vela para pedir un deseo 🕯️</p>
+        </section>
+
+        <!-- SECCIÓN REGALO SORPRESA -->
+        <section class="bg-cardWhite border border-warmSand rounded-3xl p-6 text-center shadow-sm relative">
+            <div class="gift-box relative w-28 h-28 mx-auto my-4 cursor-pointer transition-transform hover:scale-105" id="gift-box" onclick="toggleGift()">
+                <!-- Tapa con Lazo 3D -->
+                <div class="gift-lid absolute -top-1 -left-2 w-32 h-8 bg-gradient-to-r from-[#e8a598] to-[#f0b6ab] rounded-lg z-10 shadow-md">
+                    <!-- Moño elegante arriba -->
+                    <div class="w-8 h-6 bg-white rounded-t-full absolute -top-4 left-1/2 -translate-x-1/2 shadow-xs transform -rotate-12"></div>
+                    <div class="w-8 h-6 bg-white rounded-t-full absolute -top-4 left-1/2 -translate-x-1/2 shadow-xs transform rotate-12"></div>
+                    <div class="w-4 h-4 bg-accentGold rounded-full absolute -top-2.5 left-1/2 -translate-x-1/2 z-20"></div>
+                    <div class="w-5 h-full bg-white absolute left-1/2 -translate-x-1/2 opacity-90"></div>
+                </div>
+                <!-- Cuerpo del Regalo -->
+                <div class="absolute bottom-0 w-full h-20 bg-gradient-to-br from-softPink to-[#df9486] rounded-xl shadow-lg overflow-hidden border border-[#e28e80]">
+                    <div class="w-5 h-full bg-white absolute left-1/2 -translate-x-1/2 opacity-90"></div>
+                    <div class="w-full h-5 bg-white absolute top-1/2 -translate-y-1/2 opacity-90"></div>
+                </div>
+            </div>
+            <p id="gift-instruction" class="text-xs text-gray-500 mt-2 font-light">Toca el regalo para abrir la sorpresa 🎁</p>
+
+            <!-- Carta Sorpresa Revelada con Imagen -->
+            <div class="card-reveal bg-[#fffcf8] border border-dashed border-accentGold rounded-2xl p-6 text-left" id="card-reveal">
+                <h3 id="gift-title" class="font-serif text-2xl text-softCharcoal mb-3">Una sorpresa para ti</h3>
+                
+                <!-- Imagen Destacada dentro del Regalo (Modificable en CONFIG) -->
+                <div id="gift-image-container" class="mb-4 overflow-hidden rounded-xl border border-warmSand shadow-sm hidden">
+                    <img id="gift-image" class="w-full h-60 object-cover hover:scale-105 transition-transform duration-500" src="" alt="Sorpresa especial">
+                </div>
+
+                <p id="gift-message" class="text-sm leading-relaxed text-gray-700 font-light mb-4"></p>
+                <p id="gift-signature" class="font-serif italic text-right text-accentGold text-lg"></p>
+            </div>
+        </section>
+
+        <section class="space-y-4">
+            <div class="text-center space-y-1">
+                <span class="text-xs uppercase tracking-widest text-accentGold font-semibold">Memorias</span>
+                <h3 class="text-xl font-serif text-softCharcoal">Nuestros Recuerdos</h3>
+            </div>
+            <div id="gallery-grid" class="space-y-4">
+                <!-- Fotos inyectadas por JS -->
+            </div>
+        </section>
+    </main>
+
+    <!-- MODAL CÓDIGO QR Y COMPARTIR -->
+    <div id="modal-qr" class="fixed inset-0 bg-black/40 backdrop-blur-xs flex items-center justify-center p-4 z-50 opacity-0 pointer-events-none transition-opacity duration-300">
+        <div id="modal-card" class="bg-cardWhite border border-warmSand rounded-3xl p-6 max-w-sm w-full text-center shadow-xl transform scale-95 transition-transform duration-300 space-y-4">
+            <div class="flex justify-between items-center border-b border-warmSand pb-3">
+                <h3 class="font-serif text-xl font-semibold text-softCharcoal">Escanea tu Sorpresa</h3>
+                <button onclick="cerrarModalQR()" class="text-gray-400 hover:text-softCharcoal text-lg px-2">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <p class="text-xs text-gray-500">Usa la cámara de tu teléfono o compártelo directamente con el enlace.</p>
+            
+            <div class="bg-white p-4 rounded-2xl border border-warmSand inline-block shadow-inner">
+                <div id="qrcode" class="flex justify-center items-center"></div>
+            </div>
+
+            <div class="pt-2 space-y-2">
+                <button id="btn-copiar" onclick="copiarEnlace()" class="w-full bg-softCharcoal text-white text-xs py-2.5 rounded-xl font-medium shadow-sm hover:bg-black transition-all flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-link"></i>
+                    <span>Copiar Link</span>
+                </button>
+                <button onclick="cerrarModalQR()" class="w-full bg-warmSand text-softCharcoal text-xs py-2.5 rounded-xl font-medium hover:bg-gray-200 transition-all">
+                    Cerrar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('header-title').innerText = `¡Feliz Cumpleaños, ${CONFIG.nombre}! ✨`;
+            if (CONFIG.edad) {
+                document.getElementById('header-age').innerText = `${CONFIG.edad}`;
+            } else {
+                document.getElementById('header-age').style.display = 'none';
+            }
+
+            document.getElementById('gift-title').innerText = CONFIG.tituloRegalo;
+            document.getElementById('gift-message').innerText = CONFIG.mensajeRegalo;
+            document.getElementById('gift-signature').innerText = `— ${CONFIG.firma}`;
+
+            // Inyectar imagen del regalo si existe
+            if (CONFIG.imagenRegalo) {
+                const giftImgContainer = document.getElementById('gift-image-container');
+                const giftImg = document.getElementById('gift-image');
+                giftImg.src = CONFIG.imagenRegalo;
+                giftImgContainer.classList.remove('hidden');
+            }
+
+            const galleryGrid = document.getElementById('gallery-grid');
+            CONFIG.fotos.forEach(foto => {
+                const item = document.createElement('div');
+                item.className = 'bg-cardWhite rounded-2xl overflow-hidden border border-warmSand shadow-sm';
+                item.innerHTML = `
+                    <img class="w-full h-72 object-cover" src="${foto.url}" alt="Recuerdo">
+                    <div class="p-3 text-center text-lg text-gray-600">${foto.nota}</div>
+                `;
+                galleryGrid.appendChild(item);
+            });
+
+            generarQR();
+        });
+
+        let isBlown = false;
+        function blowCandle() {
+            isBlown = true;
+
+            document.getElementById('flame').classList.add('off');
+            document.getElementById('smoke').classList.add('active');
+            document.getElementById('cake-instruction').innerText = "¡Deseo concedido! ✨";
+
+            confetti({
+                particleCount: 80,
+                spread: 60,
+                origin: { y: 0.4 },
+                colors: ['#D4A373', '#FCFBF9', '#E8A598']
+            });
+        }
+
+        let isGiftOpen = false;
+        function toggleGift() {
+            isGiftOpen = !isGiftOpen;
+            const giftBox = document.getElementById('gift-box');
+            const cardReveal = document.getElementById('card-reveal');
+            const giftInstruction = document.getElementById('gift-instruction');
+
+            if (isGiftOpen) {
+                giftBox.classList.add('open');
+                cardReveal.classList.add('open');
+                giftInstruction.innerText = "✨ Un mensaje con todo el amor ✨";
+                
+                confetti({ particleCount: 40, angle: 60, spread: 55, origin: { x: 0 } });
+                confetti({ particleCount: 40, angle: 120, spread: 55, origin: { x: 1 } });
+            } else {
+                giftBox.classList.remove('open');
+                cardReveal.classList.remove('open');
+                giftInstruction.innerText = "Toca el regalo para abrir la sorpresa 🎁";
+            }
+        }
+
+        function generarQR() {
+            const qrContainer = document.getElementById("qrcode");
+            qrContainer.innerHTML = "";
+            new QRCode(qrContainer, {
+                text: window.location.href,
+                width: 140,
+                height: 140,
+                colorDark: "#2C2A29",
+                colorLight: "#ffffff",
+                correctLevel: QRCode.CorrectLevel.H
+            });
+        }
+
+        function abrirModalQR() {
+            const modal = document.getElementById('modal-qr');
+            const card = document.getElementById('modal-card');
+            modal.classList.remove('opacity-0', 'pointer-events-none');
+            card.classList.remove('scale-95');
+            card.classList.add('scale-100');
+        }
+
+        function cerrarModalQR() {
+            const modal = document.getElementById('modal-qr');
+            const card = document.getElementById('modal-card');
+            modal.classList.add('opacity-0', 'pointer-events-none');
+            card.classList.remove('scale-100');
+            card.classList.add('scale-95');
+        }
+
+        function copiarEnlace() {
+            const tempInput = document.createElement('input');
+            tempInput.value = window.location.href;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempInput);
+
+            const btn = document.getElementById('btn-copiar');
+            btn.innerHTML = `<i class="fa-solid fa-check mr-1"></i> ¡Copiado!`;
+            setTimeout(() => {
+                btn.innerHTML = `<i class="fa-solid fa-link mr-1"></i> Copiar Link`;
+            }, 2000);
+        }
+    </script>
+</body>
+</html>
